@@ -227,6 +227,8 @@ static const struct fs_path_config android_files[] = {
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procrank" },
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procmem" },
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/tcpdump" },
+    { 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/setdpi" },
+    { 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/androVM_setprop" },
     { 04770, AID_ROOT,      AID_RADIO,     0, "system/bin/pppd-ril" },
 
     /* the following file has enhanced capabilities and IS included in user builds. */
