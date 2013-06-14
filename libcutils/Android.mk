@@ -17,7 +17,7 @@ LOCAL_PATH := $(my-dir)
 include $(CLEAR_VARS)
 
 ifeq ($(TARGET_CPU_SMP),true)
-    targetSmpFlag := -DANDROID_SMP=1
+    targetSmpFlag := -DANDROID_SMP=1 
 else
     targetSmpFlag := -DANDROID_SMP=0
 endif
@@ -92,7 +92,7 @@ LOCAL_MODULE := libcutils
 LOCAL_SRC_FILES := $(commonSources) $(commonHostSources) dlmalloc_stubs.c
 LOCAL_LDLIBS := -lpthread
 LOCAL_STATIC_LIBRARIES := liblog
-LOCAL_CFLAGS += $(hostSmpFlag)
+LOCAL_CFLAGS += $(hostSmpFlag) -Dlinux
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 
@@ -103,7 +103,17 @@ LOCAL_MODULE := lib64cutils
 LOCAL_SRC_FILES := $(commonSources) $(commonHostSources) dlmalloc_stubs.c
 LOCAL_LDLIBS := -lpthread
 LOCAL_STATIC_LIBRARIES := lib64log
+ifeq ($(HOST_OS),linux)
+LOCAL_CFLAGS += $(hostSmpFlag) -m64 -Dlinux
+endif
+ifeq ($(HOST_OS),darwin)
+LOCAL_CFLAGS += $(hostSmpFlag) -m64 -Dlinux
+endif
+ifeq ($(HOST_OS),windows)
+LOCAL_CC = /usr/bin/amd64-mingw32msvc-gcc 
+LOCAL_CXX = /usr/bin/amd64-mingw32msvc-g++
 LOCAL_CFLAGS += $(hostSmpFlag) -m64
+endif
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 
@@ -140,14 +150,14 @@ endif # !arm
 
 LOCAL_C_INCLUDES := $(libcutils_c_includes) $(KERNEL_HEADERS)
 LOCAL_STATIC_LIBRARIES := liblog
-LOCAL_CFLAGS += $(targetSmpFlag)
+LOCAL_CFLAGS += $(targetSmpFlag) -Dlinux
 include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcutils
 LOCAL_WHOLE_STATIC_LIBRARIES := libcutils
-LOCAL_SHARED_LIBRARIES := liblog
-LOCAL_CFLAGS += $(targetSmpFlag)
+LOCAL_SHARED_LIBRARIES := liblog 
+LOCAL_CFLAGS += $(targetSmpFlag) -Dlinux
 LOCAL_C_INCLUDES := $(libcutils_c_includes)
 include $(BUILD_SHARED_LIBRARY)
 
