@@ -186,7 +186,17 @@ bool BatteryMonitor::update(void) {
     else
         props.batteryPresent = true;
 
-    props.batteryLevel = getIntField(mHealthdConfig->batteryCapacityPath);
+    if (mHealthdConfig->batteryCapacityPath.isEmpty()) {
+        int efull = getIntField(mHealthdConfig->batteryEnergyFullPath);
+        int enow = getIntField(mHealthdConfig->batteryEnergyNowPath);
+        if (efull)
+            props.batteryLevel = ((long long)enow)*100/efull;
+        else
+            props.batteryLevel = 0;
+    }
+    else {
+        props.batteryLevel = getIntField(mHealthdConfig->batteryCapacityPath);
+    }
     props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) / 1000;
 
     if (!mHealthdConfig->batteryCurrentNowPath.isEmpty())
@@ -333,6 +343,22 @@ void BatteryMonitor::init(struct healthd_config *hc, bool nosvcmgr) {
                                       name);
                     if (access(path, R_OK) == 0)
                         mHealthdConfig->batteryCapacityPath = path;
+                }
+
+                if (mHealthdConfig->batteryEnergyNowPath.isEmpty()) {
+                    path.clear();
+                    path.appendFormat("%s/%s/energy_now", POWER_SUPPLY_SYSFS_PATH,
+                                      name);
+                    if (access(path, R_OK) == 0)
+                        mHealthdConfig->batteryEnergyNowPath = path;
+                }
+
+                if (mHealthdConfig->batteryEnergyFullPath.isEmpty()) {
+                    path.clear();
+                    path.appendFormat("%s/%s/energy_full", POWER_SUPPLY_SYSFS_PATH,
+                                      name);
+                    if (access(path, R_OK) == 0)
+                        mHealthdConfig->batteryEnergyFullPath = path;
                 }
 
                 if (mHealthdConfig->batteryVoltagePath.isEmpty()) {
