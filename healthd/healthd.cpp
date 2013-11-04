@@ -50,6 +50,8 @@ static struct healthd_config healthd_config = {
     .batteryTechnologyPath = String8(String8::kEmptyString),
     .batteryCurrentNowPath = String8(String8::kEmptyString),
     .batteryChargeCounterPath = String8(String8::kEmptyString),
+    .batteryEnergyNowPath = String8(String8::kEmptyString),
+    .batteryEnergyFullPath = String8(String8::kEmptyString),
 };
 
 #define POWER_SUPPLY_SUBSYSTEM "power_supply"

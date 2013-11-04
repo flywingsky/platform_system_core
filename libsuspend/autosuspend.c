@@ -57,6 +57,7 @@ out:
     autosuspend_inited = true;
 
     ALOGV("autosuspend initialized\n");
+    autosuspend_inited = true;
     return 0;
 }
 
