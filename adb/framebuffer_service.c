@@ -172,7 +172,7 @@ void framebuffer_service(int fd, void *cookie)
     if(writex(fd, buf, fbinfo.size % sizeof(buf))) goto done;
 
 done:
-    waitpid(pid, NULL, 0);
+    TEMP_FAILURE_RETRY(waitpid(pid, NULL, 0));
 
     close(fds[0]);
     close(fds[1]);
