@@ -56,7 +56,6 @@ void framebuffer_service(int fd, void *cookie)
 {
     struct fbinfo fbinfo;
     unsigned int i;
-    char buf[640];
     int fd_screencap;
     int w, h, f;
     int fds[2];
@@ -164,13 +163,15 @@ void framebuffer_service(int fd, void *cookie)
     if(writex(fd, &fbinfo, sizeof(fbinfo))) goto done;
 
     /* write data */
-    for(i = 0; i < fbinfo.size; i += sizeof(buf)) {
-      if(readx(fd_screencap, buf, sizeof(buf))) goto done;
-      if(writex(fd, buf, sizeof(buf))) goto done;
-    }
-    if(readx(fd_screencap, buf, fbinfo.size % sizeof(buf))) goto done;
-    if(writex(fd, buf, fbinfo.size % sizeof(buf))) goto done;
+    char *buf = malloc(fbinfo.size * sizeof(*buf));
+    if (buf) {
+        memset(buf, 0, fbinfo.size);
 
+        if(readx(fd_screencap, buf, fbinfo.size)) goto done;
+        if(writex(fd, buf, fbinfo.size)) goto done;
+
+        free(buf);
+    }
 done:
     TEMP_FAILURE_RETRY(waitpid(pid, NULL, 0));
 
