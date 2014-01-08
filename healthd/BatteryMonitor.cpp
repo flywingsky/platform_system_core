@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -102,23 +103,24 @@ int BatteryMonitor::readFromFile(const String8& path, char* buf, size_t size) {
 
     // If the file path is a fake one, override value completely
     if (LibGenyd::useFakeValue(path.string(), buf, size) > 0) {
-       return strlen(buf);
+        return strlen(buf);
     }
 
     int fd = open(path.string(), O_RDONLY, 0);
     if (fd == -1) {
-        KLOG_ERROR(LOG_TAG, "Could not open '%s'\n", path.string());
         return -1;
     }
 
     ssize_t count = TEMP_FAILURE_RETRY(read(fd, buf, size));
-    if (count > 0)
-            cp = (char *)memrchr(buf, '\n', count);
+    if (count > 0) {
+        cp = (char *)memrchr(buf, '\n', count);
+    }
 
-    if (cp)
+    if (cp) {
         *cp = '\0';
-    else
+    } else {
         buf[0] = '\0';
+    }
 
     close(fd);
 
@@ -455,6 +457,22 @@ void BatteryMonitor::init(struct healthd_config *hc, bool nosvcmgr) {
         KLOG_WARNING(LOG_TAG, "BatteryTemperaturePath not found\n");
     if (mHealthdConfig->batteryTechnologyPath.isEmpty())
         KLOG_WARNING(LOG_TAG, "BatteryTechnologyPath not found\n");
+
+    // If battery is not present, we must override every usefull paths with fake
+    // ones to disable /sys/class/power_supply host values
+    if (mHealthdConfig->batteryPresentPath.isEmpty()) {
+        // Free every potential strduped values
+        mHealthdConfig->batteryStatusPath.clear();
+        mHealthdConfig->batteryEnergyNowPath.clear();
+        mHealthdConfig->batteryEnergyFullPath.clear();
+
+        ALOGI("overriding Battery service paths with fake ones");
+
+        mHealthdConfig->batteryPresentPath.appendFormat("%s/present", GENYMOTION_FAKE_POWER_SUPPLY);
+        mHealthdConfig->batteryStatusPath.appendFormat("%s/status", GENYMOTION_FAKE_POWER_SUPPLY);
+        mHealthdConfig->batteryEnergyNowPath.appendFormat("%s/energy_now", GENYMOTION_FAKE_POWER_SUPPLY);
+        mHealthdConfig->batteryEnergyFullPath.appendFormat("%s/energy_full", GENYMOTION_FAKE_POWER_SUPPLY);
+    }
 
     if (nosvcmgr == false) {
             mBatteryPropertiesRegistrar = new BatteryPropertiesRegistrar(this);
