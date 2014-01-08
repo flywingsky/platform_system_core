@@ -31,6 +31,8 @@
 #include <utils/String8.h>
 #include <utils/Vector.h>
 
+#include <libgenyd.hpp>
+
 #define POWER_SUPPLY_SUBSYSTEM "power_supply"
 #define POWER_SUPPLY_SYSFS_PATH "/sys/class/" POWER_SUPPLY_SUBSYSTEM
 
@@ -97,6 +99,12 @@ int BatteryMonitor::readFromFile(const String8& path, char* buf, size_t size) {
 
     if (path.isEmpty())
         return -1;
+
+    // If the file path is a fake one, override value completely
+    if (LibGenyd::useFakeValue(path.string(), buf, size) > 0) {
+       return strlen(buf);
+    }
+
     int fd = open(path.string(), O_RDONLY, 0);
     if (fd == -1) {
         KLOG_ERROR(LOG_TAG, "Could not open '%s'\n", path.string());
@@ -113,6 +121,13 @@ int BatteryMonitor::readFromFile(const String8& path, char* buf, size_t size) {
         buf[0] = '\0';
 
     close(fd);
+
+    // Cache value and use real or overloaded one
+    int geny_result = LibGenyd::getValueFromProc(path, buf, size);
+    if (geny_result != -1) {
+	return geny_result;
+    }
+
     return count;
 }
 
