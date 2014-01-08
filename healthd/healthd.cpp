@@ -238,7 +238,7 @@ static void healthd_mainloop(void) {
         int nevents;
 
         IPCThreadState::self()->flushCommands();
-        nevents = epoll_wait(epollfd, events, maxevents, awake_poll_interval);
+        nevents = epoll_wait(epollfd, events, maxevents, 5000); // 5 seconds
 
         if (nevents == -1) {
             if (errno == EINTR)
@@ -248,12 +248,14 @@ static void healthd_mainloop(void) {
         }
 
         for (int n = 0; n < nevents; ++n) {
-            if (events[n].data.ptr)
+            if (events[n].data.ptr) {
                 (*(void (*)())events[n].data.ptr)();
+            }
         }
 
-        if (!nevents)
+        if (!nevents) {
             periodic_chores();
+        }
     }
 
     return;
