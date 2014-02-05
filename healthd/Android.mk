@@ -17,7 +17,7 @@ LOCAL_SRC_FILES := \
 	BatteryPropertiesRegistrar.cpp
 
 LOCAL_C_INCLUDES += \
-	device/androVM/common/system/genyd/lib \
+	device/androVM/common/libgenymotion \
 	bionic \
 	external/stlport/stlport
 
@@ -27,7 +27,7 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
 LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 
-LOCAL_STATIC_LIBRARIES :=  libbatteryservice libbinder libz libutils libstdc++ libcutils liblog libm libc libgenyd libstlport_static
+LOCAL_STATIC_LIBRARIES :=  libbatteryservice libbinder libz libutils libstdc++ libcutils liblog libm libc libgenymotion libstlport_static
 
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
 
