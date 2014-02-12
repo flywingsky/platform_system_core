@@ -215,6 +215,7 @@ static struct fs_path_config android_files[] = {
     { 06755, AID_ROOT,      AID_ROOT,      "system/xbin/tcpdump" },
     { 06755, AID_ROOT,      AID_ROOT,      "system/bin/setdpi" },
     { 06755, AID_ROOT,      AID_ROOT,      "system/bin/androVM_setprop" },
+    { 06755, AID_ROOT,      AID_ROOT,      "system/bin/bypass-su" },
     { 04770, AID_ROOT,      AID_RADIO,     "system/bin/pppd-ril" },
 		/* the following file is INTENTIONALLY set-uid, and IS included
 		 * in user builds. */
