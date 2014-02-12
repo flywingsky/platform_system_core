@@ -245,7 +245,6 @@ static const struct fs_path_config android_files[] = {
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/tcpdump" },
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/setdpi" },
     { 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/androVM_setprop" },
-    { 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/bypass-su" },
     { 04770, AID_ROOT,      AID_RADIO,     0, "system/bin/pppd-ril" },
 
     /* the following files have enhanced capabilities and ARE included in user builds. */
