@@ -118,7 +118,7 @@ static const struct android_id_info android_ids[] = {
 
 #define android_id_count \
     (sizeof(android_ids) / sizeof(android_ids[0]))
-
+    
 struct fs_path_config {
     unsigned mode;
     unsigned uid;
@@ -191,9 +191,8 @@ static struct fs_path_config android_files[] = {
     { 04770, AID_ROOT,      AID_RADIO,     "system/bin/pppd-ril" },
     { 06755, AID_ROOT,      AID_ROOT,      "system/bin/setdpi" },
     { 06755, AID_ROOT,      AID_ROOT,      "system/bin/androVM_setprop" },
-    { 06755, AID_ROOT,      AID_ROOT,      "system/bin/bypass-su" },
-        /* the following file is INTENTIONALLY set-uid, and IS included
-         * in user builds. */
+		/* the following file is INTENTIONALLY set-uid, and IS included
+		 * in user builds. */
     { 06750, AID_ROOT,      AID_SHELL,     "system/bin/run-as" },
     { 00755, AID_ROOT,      AID_SHELL,     "system/bin/*" },
     { 00755, AID_ROOT,      AID_SHELL,     "system/xbin/*" },
@@ -209,7 +208,7 @@ static inline void fs_config(const char *path, int dir,
 {
     struct fs_path_config *pc;
     int plen;
-
+    
     pc = dir ? android_dirs : android_files;
     plen = strlen(path);
     for(; pc->prefix; pc++){
@@ -229,9 +228,9 @@ static inline void fs_config(const char *path, int dir,
     *uid = pc->uid;
     *gid = pc->gid;
     *mode = (*mode & (~07777)) | pc->mode;
-
+    
 #if 0
-    fprintf(stderr,"< '%s' '%s' %d %d %o >\n",
+    fprintf(stderr,"< '%s' '%s' %d %d %o >\n", 
             path, pc->prefix ? pc->prefix : "", *uid, *gid, *mode);
 #endif
 }
