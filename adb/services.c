@@ -135,13 +135,7 @@ void reboot_service(int fd, void *arg)
     }
     // Don't return early. Give the reboot command time to take effect
     // to avoid messing up scripts which do "adb reboot && adb wait-for-device"
-    //while(1) { pause(); }
-    // Genymotion: no, this ^ is not the right way to handle that problem
-    // because adb reboot don't even close connection in this case, and
-    // "adb reboot" wait endlessly on the host side.
-    // This "adb reboot && adb wait-for-device" doesn't work at all so, better
-    // close the connection to make "adb reboot" non blocking.
-
+    while(1) { pause(); }
 cleanup:
     free(arg);
     adb_close(fd);
