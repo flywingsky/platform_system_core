@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #if !ADB_HOST
 #include <cutils/properties.h>
+#include <arpa/inet.h>
 #endif
 
 #define  TRACE_TAG  TRACE_TRANSPORT
@@ -157,7 +158,7 @@ static void *client_socket_thread(void *x)
 static void *server_socket_thread(void * arg)
 {
     int serverfd, fd;
-    struct sockaddr addr;
+    struct sockaddr_in addr;
     socklen_t alen;
     int port = (int)arg;
 
@@ -176,12 +177,26 @@ static void *server_socket_thread(void * arg)
 
         alen = sizeof(addr);
         D("server: trying to get new connection from %d\n", port);
-        fd = adb_socket_accept(serverfd, &addr, &alen);
+        fd = adb_socket_accept(serverfd, (struct sockaddr *)&addr, &alen);
         if(fd >= 0) {
             D("server: new connection on fd %d\n", fd);
             close_on_exec(fd);
             disable_tcp_nagle(fd);
-            register_socket_transport(fd, "host", port, 1);
+
+            char serial[256];
+#if !ADB_HOST
+            /* Build serial identifier from cnx host info to be able to handle multiple
+             * network connections to adbd simultaneously
+             */
+            snprintf(serial, sizeof(serial), "%s%d", inet_ntoa(addr.sin_addr), addr.sin_port);
+#else
+            /* XXX: I don't want to handle cross compilation of adb so, keep
+             * old serial id for host adb binary
+             */
+            snprintf(serial, sizeof(serial), "host");
+#endif /* !ADB_HOST */
+
+            register_socket_transport(fd, serial, port, 1);
         }
     }
     D("transport: server_socket_thread() exiting\n");
